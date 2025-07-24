@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SocialGram - Post</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    :root {
+      --primary-color: #405DE6;
+      --secondary-color: #5851DB;
+      --accent-color: #833AB4;
+      --danger-color: #E1306C;
+      --light-color: #f8f9fa;
+      --dark-color: #343a40;
+      --border-color: #dbdbdb;
+      --text-dark: #262626;
+      --text-light: #8e8e8e;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background-color: #fafafa;
+      color: var(--text-dark);
+      line-height: 1.6;
+    }
+    
+    .container {
+      max-width: 935px;
+      margin: 0 auto;
+      padding: 30px 20px 0;
+    }
+    
+    /* Header Styles */
+    .header {
+      background-color: white;
+      border-bottom: 1px solid var(--border-color);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      height: 54px;
+      padding: 0 20px;
+    }
+    
+    .logo {
+      font-size: 24px;
+      font-weight: 600;
+      text-decoration: none;
+      color: var(--text-dark);
+      font-family: 'Billabong', cursive;
+    }
+    
+    @font-face {
+      font-family: 'Billabong';
+      src: url('https://cdn.rawgit.com/milktronics/beaglegr.am/master/public/fonts/billabong-webfont.eot');
+      src: url('https://cdn.rawgit.com/milktronics/beaglegr.am/master/public/fonts/billabong-webfont.eot?#iefix') format('embedded-opentype'),
+           url('https://cdn.rawgit.com/milktronics/beaglegr.am/master/public/fonts/billabong-webfont.woff') format('woff'),
+           url('https://cdn.rawgit.com/milktronics/beaglegr.am/master/public/fonts/billabong-webfont.ttf') format('truetype'),
+           url('https://cdn.rawgit.com/milktronics/beaglegr.am/master/public/fonts/billabong-webfont.svg#billabongregular') format('svg');
+      font-weight: normal;
+      font-style: normal;
+    }
+    
+    .search-bar {
+      position: relative;
+      width: 215px;
+    }
+    
+    .search-bar input {
+      background-color: #efefef;
+      border: none;
+      border-radius: 8px;
+      padding: 8px 10px 8px 30px;
+      width: 100%;
+      font-size: 14px;
+    }
+    
+    .search-bar::before {
+      content: "\f002";
+      font-family: "Font Awesome 6 Free";
+      font-weight: 900;
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-light);
+      font-size: 14px;
+    }
+    
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 22px;
+    }
+    
+    .nav-link {
+      text-decoration: none;
+      color: var(--text-dark);
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+    }
+    
+    .nav-link.active {
+      font-weight: 600;
+    }
+    
+    .nav-link i {
+      font-size: 22px;
+    }
+    
+    .profile-pic {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+    
+    /* Post Detail Styles */
+    .post-detail {
+      display: flex;
+      background-color: white;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      margin-bottom: 30px;
+      position: relative;
+    }
+    
+    .post-media-container {
+      flex: 2;
+      background-color: black;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 500px;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .post-media-wrapper {
+      width: 100%;
+      height: 100%;
+      position: relative;
+    }
+    
+    .post-media-carousel {
+      display: flex;
+      width: 100%;
+      height: 100%;
+      transition: transform 0.5s ease;
+    }
+    
+    .post-media-slide {
+      min-width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+    
+    .post-media {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      display: block;
+    }
+    
+    .carousel-nav {
+      position: absolute;
+      bottom: 20px;
+      left: 0;
+      right: 0;
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      z-index: 10;
+    }
+    
+    .carousel-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background-color: rgba(255, 255, 255, 0.5);
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    
+    .carousel-dot.active {
+      background-color: rgba(255, 255, 255, 0.9);
+    }
+    
+    .carousel-arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background-color: rgba(0, 0, 0, 0.5);
+      color: white;
+      border: none;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      opacity: 0;
+      transition: opacity 0.3s;
+      z-index: 10;
+    }
+    
+    .carousel-arrow.left {
+      left: 15px;
+    }
+    
+    .carousel-arrow.right {
+      right: 15px;
+    }
+    
+    .post-media-container:hover .carousel-arrow {
+      opacity: 1;
+    }
+    
+    .post-sidebar {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      max-width: 335px;
+      border-left: 1px solid var(--border-color);
+    }
+    
+    .post-header {
+      display: flex;
+      align-items: center;
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border-color);
+    }
+    
+    .post-user-pic {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-right: 12px;
+    }
+    
+    .post-username {
+      font-weight: 600;
+      font-size: 14px;
+      text-decoration: none;
+      color: var(--text-dark);
+    }
+    
+    .post-more {
+      margin-left: auto;
+      cursor: pointer;
+    }
+    
+    .post-comments-section {
+      flex: 1;
+      padding: 16px;
+      overflow-y: auto;
+      max-height: 400px;
+    }
+    
+    .comment {
+      display: flex;
+      margin-bottom: 16px;
+    }
+    
+    .comment-user-pic {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-right: 12px;
+    }
+    
+    .comment-content {
+      flex: 1;
+    }
+    
+    .comment-username {
+      font-weight: 600;
+      font-size: 14px;
+      text-decoration: none;
+      color: var(--text-dark);
+      margin-right: 5px;
+    }
+    
+    .comment-text {
+      font-size: 14px;
+    }
+    
+    .comment-time {
+      font-size: 12px;
+      color: var(--text-light);
+      margin-top: 4px;
+    }
+    
+    .comment-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 4px;
+    }
+    
+    .comment-action {
+      font-size: 12px;
+      color: var(--text-light);
+      cursor: pointer;
+    }
+    
+    .post-actions {
+      padding: 6px 16px;
+      display: flex;
+      gap: 16px;
+      border-top: 1px solid var(--border-color);
+      border-bottom: 1px solid var(--border-color);
+    }
+    
+    .post-action {
+      font-size: 24px;
+      cursor: pointer;
+      color: var(--text-dark);
+      background: none;
+      border: none;
+      padding: 0;
+    }
+    
+    .post-action.liked {
+      color: var(--danger-color);
+    }
+    
+    .post-action.save {
+      margin-left: auto;
+    }
+    
+    .post-likes {
+      font-weight: 600;
+      font-size: 14px;
+      padding: 0 16px;
+      margin: 8px 0;
+    }
+    
+    .post-caption {
+      padding: 0 16px;
+      margin-bottom: 8px;
+    }
+    
+    .post-caption-username {
+      font-weight: 600;
+      margin-right: 5px;
+      text-decoration: none;
+      color: var(--text-dark);
+    }
+    
+    .post-time {
+      padding: 0 16px 12px;
+      color: var(--text-light);
+      font-size: 10px;
+      text-transform: uppercase;
+      border-bottom: 1px solid var(--border-color);
+    }
+    
+    .post-add-comment {
+      display: flex;
+      padding: 16px;
+    }
+    
+    .comment-input {
+      flex: 1;
+      border: none;
+      outline: none;
+      font-size: 14px;
+    }
+    
+    .comment-post {
+      color: var(--primary-color);
+      font-weight: 600;
+      background: none;
+      border: none;
+      cursor: pointer;
+    }
+    
+    .comment-post:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    
+    /* Modal Styles */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.8);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+    
+    .modal {
+      background-color: white;
+      border-radius: 12px;
+      max-width: 90%;
+      max-height: 90%;
+      overflow: auto;
+      position: relative;
+    }
+    
+    .modal-close {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      background: none;
+      border: none;
+      color: white;
+      font-size: 24px;
+      cursor: pointer;
+      z-index: 1001;
+    }
+    
+    /* Responsive Styles */
+    @media (max-width: 768px) {
+      .post-detail {
+        flex-direction: column;
+      }
+      
+      .post-sidebar {
+        max-width: 100%;
+      }
+      
+      .post-media-container {
+        min-height: 400px;
+      }
+      
+      .search-bar {
+        display: none;
+      }
+      
+      .navbar {
+        padding: 0 10px;
+      }
+      
+      .container {
+        padding: 20px 10px 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="container">
+      <nav class="navbar">
+        <a href="http://127.0.0.1:3000/views/profile.html" class="logo">SocialGram</a>
+        <div class="search-bar">
+          <input type="text" placeholder="Search...">
+        </div>
+        <div class="nav-links">
+          <a href="http://127.0.0.1:3000/views/index.html" class="nav-link"><i class="fas fa-home"></i></a>
+          <a href="http://127.0.0.1:3000/views/profile.html" class="nav-link auth-only" id="profile-link" style="display: none;">
+            <img src="https://randomuser.me/api/portraits/men/1.jpg" alt="Profile" class="profile-pic">
+          </a>
+          <button id="logout-btn" class="nav-link auth-only" style="display: none;"><i class="fas fa-sign-out-alt"></i></button>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <div id="post-detail-container">
+      <!-- Post detail will be loaded here -->
+    </div>
+  </main>
+
+  <div class="modal-overlay" id="modal-overlay" style="display: none;">
+    <button class="modal-close" id="modal-close">&times;</button>
+    <div class="modal" id="modal-content"></div>
+  </div>
+
+  <script>
+    // Mock data for the post with working image URLs
+    const mockPost = {
+      id: 1,
+      userId: 1,
+      username: 'travel_enthusiast',
+      userPic: 'https://randomuser.me/api/portraits/women/44.jpg',
+      content: 'Beautiful sunset at Santorini! 🌅 #travel #greece #sunset',
+      media: [
+        { 
+          type: 'image', 
+          url: 'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80',
+          alt: 'Santorini sunset'
+        },
+        { 
+          type: 'image', 
+          url: 'https://images.unsplash.com/photo-1505884065216-0661d68e5c47?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80',
+          alt: 'Santorini white buildings'
+        },
+        { 
+          type: 'image', 
+          url: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80',
+          alt: 'Santorini streets'
+        }
+      ],
+      likes: 124,
+      comments: [
+        {
+          id: 1,
+          userId: 2,
+          username: 'wanderlust_jane',
+          userPic: 'https://randomuser.me/api/portraits/women/33.jpg',
+          text: 'Stunning view! Which hotel is this? 😍',
+          timestamp: '2023-06-15T11:30:00Z',
+          likes: 3
+        },
+        {
+          id: 2,
+          userId: 3,
+          username: 'photography_lover',
+          userPic: 'https://randomuser.me/api/portraits/men/22.jpg',
+          text: 'Perfect shot! What camera did you use?',
+          timestamp: '2023-06-15T12:45:00Z',
+          likes: 1
+        },
+        {
+          id: 3,
+          userId: 4,
+          username: 'travel_addict',
+          userPic: 'https://randomuser.me/api/portraits/women/55.jpg',
+          text: 'I was there last month! The sunsets are unbelievable 🌅',
+          timestamp: '2023-06-15T14:20:00Z',
+          likes: 5
+        }
+      ],
+      timestamp: '2023-06-15T10:30:00Z',
+      isLiked: false,
+      isSaved: false
+    };
+
+    // DOM Elements
+    const postDetailContainer = document.getElementById('post-detail-container');
+    const modalOverlay = document.getElementById('modal-overlay');
+    const modalContent = document.getElementById('modal-content');
+    const modalClose = document.getElementById('modal-close');
+    
+    // Carousel state
+    let currentSlide = 0;
+    let touchStartX = 0;
+    let touchEndX = 0;
+    
+    // Initialize the app
+    function init() {
+      // Check if user is logged in (in a real app, this would check localStorage or cookies)
+      const isLoggedIn = true; // Change to false to simulate logged out state
+      
+      if (isLoggedIn) {
+        document.getElementById('profile-link').style.display = '';
+        document.getElementById('logout-btn').style.display = '';
+      }
+      
+      // Load the post
+      loadPost();
+      
+      // Set up event listeners
+      setupEventListeners();
+    }
+    
+    // Load the post
+    function loadPost() {
+      const postElement = createPostElement(mockPost);
+      postDetailContainer.innerHTML = '';
+      postDetailContainer.appendChild(postElement);
+      
+      // Initialize carousel if there are multiple images
+      if (mockPost.media.length > 1) {
+        initCarousel();
+      }
+    }
+    
+    // Initialize carousel functionality
+    function initCarousel() {
+      const carousel = document.querySelector('.post-media-carousel');
+      const slides = document.querySelectorAll('.post-media-slide');
+      const dots = document.querySelectorAll('.carousel-dot');
+      const prevBtn = document.querySelector('.carousel-arrow.left');
+      const nextBtn = document.querySelector('.carousel-arrow.right');
+      const mediaContainer = document.querySelector('.post-media-container');
+      
+      // Set initial active dot
+      dots[0].classList.add('active');
+      
+      // Update carousel position
+      function updateCarousel() {
+        carousel.style.transform = `translateX(-${currentSlide * 100}%)`;
+        
+        // Update active dot
+        dots.forEach((dot, index) => {
+          dot.classList.toggle('active', index === currentSlide);
+        });
+      }
+      
+      // Next slide
+      function nextSlide() {
+        currentSlide = (currentSlide + 1) % slides.length;
+        updateCarousel();
+      }
+      
+      // Previous slide
+      function prevSlide() {
+        currentSlide = (currentSlide - 1 + slides.length) % slides.length;
+        updateCarousel();
+      }
+      
+      // Event listeners for buttons
+      nextBtn.addEventListener('click', nextSlide);
+      prevBtn.addEventListener('click', prevSlide);
+      
+      // Dot navigation
+      dots.forEach((dot, index) => {
+        dot.addEventListener('click', () => {
+          currentSlide = index;
+          updateCarousel();
+        });
+      });
+      
+      // Keyboard navigation
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight') {
+          nextSlide();
+        } else if (e.key === 'ArrowLeft') {
+          prevSlide();
+        }
+      });
+      
+      // Touch events for mobile swipe
+      mediaContainer.addEventListener('touchstart', (e) => {
+        touchStartX = e.changedTouches[0].screenX;
+      }, { passive: true });
+      
+      mediaContainer.addEventListener('touchend', (e) => {
+        touchEndX = e.changedTouches[0].screenX;
+        handleSwipe();
+      }, { passive: true });
+      
+      function handleSwipe() {
+        const threshold = 50;
+        if (touchEndX < touchStartX - threshold) {
+          nextSlide();
+        } else if (touchEndX > touchStartX + threshold) {
+          prevSlide();
+        }
+      }
+    }
+    
+    // Create post element
+    function createPostElement(post) {
+      const postElement = document.createElement('div');
+      postElement.className = 'post-detail';
+      
+      // Media content - carousel for multiple images
+      let mediaContent = '';
+      if (post.media.length > 0) {
+        mediaContent = `<div class="post-media-container">
+          <div class="post-media-wrapper">
+            <div class="post-media-carousel">`;
+        
+        post.media.forEach((item, index) => {
+          if (item.type === 'image') {
+            mediaContent += `
+              <div class="post-media-slide">
+                <img src="${item.url}" class="post-media" alt="${item.alt || 'Post image'}" loading="lazy">
+              </div>`;
+          } else if (item.type === 'video') {
+            mediaContent += `
+              <div class="post-media-slide">
+                <video class="post-media" controls>
+                  <source src="${item.url}" type="video/mp4">
+                  Your browser does not support the video tag.
+                </video>
+              </div>`;
+          }
+        });
+        
+        mediaContent += `</div>`;
+        
+        // Add carousel navigation if multiple media items
+        if (post.media.length > 1) {
+          mediaContent += `
+            <button class="carousel-arrow left"><i class="fas fa-chevron-left"></i></button>
+            <button class="carousel-arrow right"><i class="fas fa-chevron-right"></i></button>
+            <div class="carousel-nav">`;
+          
+          post.media.forEach((_, index) => {
+            mediaContent += `<div class="carousel-dot" data-index="${index}"></div>`;
+          });
+          
+          mediaContent += `</div>`;
+        }
+        
+        mediaContent += `</div></div>`;
+      }
+      
+      // Format timestamp
+      const postDate = new Date(post.timestamp);
+      const timeAgo = formatTimeAgo(postDate);
+      
+      // Comments
+      let commentsHtml = '';
+      post.comments.forEach(comment => {
+        const commentDate = new Date(comment.timestamp);
+        const commentTimeAgo = formatTimeAgo(commentDate);
+        
+        commentsHtml += `
+          <div class="comment">
+            <img src="${comment.userPic}" class="comment-user-pic" alt="${comment.username}" loading="lazy">
+            <div class="comment-content">
+              <div>
+                <a href="/profile.html" class="comment-username">${comment.username}</a>
+                <span class="comment-text">${comment.text}</span>
+              </div>
+              <div class="comment-time">${commentTimeAgo}</div>
+              <div class="comment-actions">
+                <span class="comment-action">${comment.likes} like${comment.likes !== 1 ? 's' : ''}</span>
+                <span class="comment-action">Reply</span>
+              </div>
+            </div>
+          </div>
+        `;
+      });
+      
+      postElement.innerHTML = `
+        ${mediaContent}
+        <div class="post-sidebar">
+          <div class="post-header">
+            <img src="${post.userPic}" class="post-user-pic" alt="${post.username}" loading="lazy">
+            <a href="/profile.html" class="post-username">${post.username}</a>
+            <div class="post-more">
+              <i class="fas fa-ellipsis-h"></i>
+            </div>
+          </div>
+          
+          <div class="post-comments-section">
+            <div class="post-caption">
+              <a href="/profile.html" class="post-caption-username">${post.username}</a>
+              ${post.content}
+            </div>
+            ${commentsHtml}
+          </div>
+          
+          <div class="post-actions">
+            <button class="post-action ${post.isLiked ? 'liked' : ''}" data-post-id="${post.id}">
+              <i class="${post.isLiked ? 'fas' : 'far'} fa-heart"></i>
+            </button>
+            <button class="post-action" data-post-id="${post.id}">
+              <i class="far fa-comment"></i>
+            </button>
+            <button class="post-action" data-post-id="${post.id}">
+              <i class="far fa-paper-plane"></i>
+            </button>
+            <button class="post-action save ${post.isSaved ? 'saved' : ''}" data-post-id="${post.id}">
+              <i class="${post.isSaved ? 'fas' : 'far'} fa-bookmark"></i>
+            </button>
+          </div>
+          
+          <div class="post-likes">${post.likes} like${post.likes !== 1 ? 's' : ''}</div>
+          <div class="post-time">${timeAgo}</div>
+          
+          <div class="post-add-comment">
+            <input type="text" class="comment-input" placeholder="Add a comment...">
+            <button class="comment-post" disabled>Post</button>
+          </div>
+        </div>
+      `;
+      
+      return postElement;
+    }
+    
+    // Format time ago
+    function formatTimeAgo(date) {
+      const now = new Date();
+      const diffInSeconds = Math.floor((now - date) / 1000);
+      
+      if (diffInSeconds < 60) {
+        return `${diffInSeconds} seconds ago`;
+      }
+      
+      const diffInMinutes = Math.floor(diffInSeconds / 60);
+      if (diffInMinutes < 60) {
+        return `${diffInMinutes} minute${diffInMinutes === 1 ? '' : 's'} ago`;
+      }
+      
+      const diffInHours = Math.floor(diffInMinutes / 60);
+      if (diffInHours < 24) {
+        return `${diffInHours} hour${diffInHours === 1 ? '' : 's'} ago`;
+      }
+      
+      const diffInDays = Math.floor(diffInHours / 24);
+      return `${diffInDays} day${diffInDays === 1 ? '' : 's'} ago`;
+    }
+    
+    // Set up event listeners
+    function setupEventListeners() {
+      // Like button
+      document.addEventListener('click', function(e) {
+        if (e.target.closest('.post-action') && e.target.closest('.post-action').querySelector('.fa-heart')) {
+          const likeBtn = e.target.closest('.post-action');
+          const postId = parseInt(likeBtn.dataset.postId);
+          
+          // Toggle like state
+          mockPost.isLiked = !mockPost.isLiked;
+          mockPost.likes += mockPost.isLiked ? 1 : -1;
+          
+          // Update UI
+          const heartIcon = likeBtn.querySelector('.fa-heart');
+          heartIcon.classList.toggle('far');
+          heartIcon.classList.toggle('fas');
+          likeBtn.classList.toggle('liked');
+          
+          const likesElement = likeBtn.closest('.post-sidebar').querySelector('.post-likes');
+          likesElement.textContent = `${mockPost.likes} like${mockPost.likes !== 1 ? 's' : ''}`;
+        }
+        
+        // Save button
+        if (e.target.closest('.post-action') && e.target.closest('.post-action').querySelector('.fa-bookmark')) {
+          const saveBtn = e.target.closest('.post-action');
+          const postId = parseInt(saveBtn.dataset.postId);
+          
+          // Toggle save state
+          mockPost.isSaved = !mockPost.isSaved;
+          
+          // Update UI
+          const bookmarkIcon = saveBtn.querySelector('.fa-bookmark');
+          bookmarkIcon.classList.toggle('far');
+          bookmarkIcon.classList.toggle('fas');
+          saveBtn.classList.toggle('saved');
+        }
+      });
+      
+      // Comment input
+      document.addEventListener('input', function(e) {
+        if (e.target.classList.contains('comment-input')) {
+          const commentBtn = e.target.nextElementSibling;
+          commentBtn.disabled = e.target.value.trim() === '';
+        }
+      });
+      
+      // Comment submission
+      document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('comment-post') && !e.target.disabled) {
+          const commentInput = e.target.previousElementSibling;
+          const commentText = commentInput.value.trim();
+          
+          if (commentText) {
+            // Add new comment
+            const newComment = {
+              id: mockPost.comments.length + 1,
+              userId: 1, // Current user
+              username: 'current_user',
+              userPic: 'https://randomuser.me/api/portraits/men/3.jpg',
+              text: commentText,
+              timestamp: new Date().toISOString(),
+              likes: 0
+            };
+            
+            mockPost.comments.push(newComment);
+            
+            // Reload post to show new comment
+            loadPost();
+            
+            // Clear input
+            commentInput.value = '';
+          }
+        }
+      });
+      
+      // Modal close
+      modalClose.addEventListener('click', function() {
+        modalOverlay.style.display = 'none';
+      });
+      
+      modalOverlay.addEventListener('click', function(e) {
+        if (e.target === modalOverlay) {
+          modalOverlay.style.display = 'none';
+        }
+      });
+    }
+    
+    // Initialize the app when DOM is loaded
+    document.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>

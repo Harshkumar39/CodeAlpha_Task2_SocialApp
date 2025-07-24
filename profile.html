@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Social Media App - Profile</title>
+  <link rel="stylesheet" href="/public/css/styles.css">
+  <style>
+    /* Additional styles for profile page */
+    .profile-header {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem;
+      background-color: #f8f9fa;
+      border-radius: 8px;
+      margin-bottom: 2rem;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    .profile-banner {
+      width: 100%;
+      height: 200px;
+      background-color: #e9ecef;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      overflow: hidden;
+    }
+    
+    .profile-banner img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    
+    .profile-info {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+    
+    .profile-pic-large {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 4px solid white;
+      margin-top: -75px;
+      background-color: #dee2e6;
+    }
+    
+    .profile-name {
+      font-size: 2rem;
+      margin: 1rem 0 0.5rem;
+    }
+    
+    .profile-username {
+      color: #6c757d;
+      margin-bottom: 1rem;
+    }
+    
+    .profile-bio {
+      max-width: 600px;
+      margin-bottom: 1rem;
+      line-height: 1.5;
+    }
+    
+    .profile-stats {
+      display: flex;
+      gap: 2rem;
+      margin-bottom: 1rem;
+    }
+    
+    .profile-stat {
+      text-align: center;
+    }
+    
+    .stat-number {
+      font-weight: bold;
+      font-size: 1.2rem;
+    }
+    
+    .stat-label {
+      font-size: 0.9rem;
+      color: #6c757d;
+    }
+    
+    .profile-actions {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+    
+    .btn {
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      border: none;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+    
+    .btn-primary {
+      background-color: #0d6efd;
+      color: white;
+    }
+    
+    .btn-outline {
+      background-color: transparent;
+      border: 1px solid #dee2e6;
+    }
+    
+    .btn:hover {
+      opacity: 0.9;
+      transform: translateY(-1px);
+    }
+    
+    .profile-tabs {
+      display: flex;
+      border-bottom: 1px solid #dee2e6;
+      margin-bottom: 2rem;
+    }
+    
+    .profile-tab {
+      padding: 1rem 2rem;
+      cursor: pointer;
+      position: relative;
+    }
+    
+    .profile-tab.active {
+      font-weight: bold;
+    }
+    
+    .profile-tab.active::after {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background-color: #0d6efd;
+    }
+    
+    .posts-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1rem;
+    }
+    
+    .post-card {
+      border: 1px solid #dee2e6;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    
+    .post-image {
+      width: 100%;
+      height: 300px;
+      object-fit: cover;
+    }
+    
+    .post-actions {
+      padding: 1rem;
+      display: flex;
+      gap: 1rem;
+    }
+    
+    .edit-profile-form {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      padding: 1rem;
+    }
+    
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    
+    .form-control {
+      padding: 0.5rem;
+      border: 1px solid #dee2e6;
+      border-radius: 4px;
+    }
+    
+    .form-control:focus {
+      outline: none;
+      border-color: #0d6efd;
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="container">
+      <nav class="navbar">
+        <a href="/" class="logo">SocialApp</a>
+        <div class="search-bar">
+          <input type="text" placeholder="Search...">
+        </div>
+        <div class="nav-links">
+          <a href="http://127.0.0.1:3000/views/index.html" class="nav-link">Home</a>
+          <a href="/profile.html" class="nav-link auth-only" id="profile-link" style="display: none;">
+            <img src="/images/default-profile.png" alt="Profile" class="profile-pic">
+          </a>
+          <button id="logout-btn" class="nav-link auth-only" style="display: none;">Logout</button>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="profile-header" id="profile-header">
+      <div class="profile-banner">
+        <img src="https://www.google.com/url?sa=i&url=https%3A%2F%2Fstore.steampowered.com%2Fapp%2F779110%2FHarsh%2F&psig=AOvVaw0Kjxqm6kNy5P-8ZCW7I9rt&ust=1753423829435000&source=images&cd=vfe&opi=89978449&ved=0CBUQjRxqFwoTCLDPx_bq1I4DFQAAAAAdAAAAABAE" alt="Banner" id="profile-banner-img">
+      </div>
+      <div class="profile-info">
+        <img src="/images/default-profile.png" alt="Profile" class="profile-pic-large" id="profile-picture">
+        <h1 class="profile-name" id="profile-name">Loading...</h1>
+        <p class="profile-username" id="profile-username">@username</p>
+        <p class="profile-bio" id="profile-bio">This is a sample bio. Click edit to update your profile information.</p>
+        <div class="profile-stats">
+          <div class="profile-stat">
+            <div class="stat-number" id="post-count">0</div>
+            <div class="stat-label">Posts</div>
+          </div>
+          <div class="profile-stat">
+            <div class="stat-number" id="follower-count">0</div>
+            <div class="stat-label">Followers</div>
+          </div>
+          <div class="profile-stat">
+            <div class="stat-number" id="following-count">0</div>
+            <div class="stat-label">Following</div>
+          </div>
+        </div>
+        <div class="profile-actions" id="profile-actions">
+          <button class="btn btn-primary" id="edit-profile-btn">Edit Profile</button>
+          <button class="btn btn-outline" id="share-profile-btn">Share Profile</button>
+        </div>
+      </div>
+    </div>
+    
+    <div class="profile-tabs">
+      <div class="profile-tab active" data-tab="posts">Posts</div>
+      <div class="profile-tab" data-tab="saved">Saved</div>
+      <div class="profile-tab" data-tab="tagged">Tagged</div>
+    </div>
+    
+    <div id="profile-posts-container">
+      <div class="posts-grid" id="posts-grid">
+        <!-- Posts will be loaded here -->
+        <div class="no-posts" id="no-posts" style="display: none;">
+          <p>No posts yet. Create your first post!</p>
+          <button class="btn btn-primary" id="create-first-post">Create Post</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <div class="modal-overlay" id="modal-overlay" style="display: none;">
+    <div class="modal" id="modal-content">
+      <!-- Modal content will be loaded here -->
+    </div>
+  </div>
+
+  <script>
+    // DOM Elements
+    const profileHeader = document.getElementById('profile-header');
+    const profilePicture = document.getElementById('profile-picture');
+    const profileName = document.getElementById('profile-name');
+    const profileUsername = document.getElementById('profile-username');
+    const profileBio = document.getElementById('profile-bio');
+    const postCount = document.getElementById('post-count');
+    const followerCount = document.getElementById('follower-count');
+    const followingCount = document.getElementById('following-count');
+    const profileActions = document.getElementById('profile-actions');
+    const editProfileBtn = document.getElementById('edit-profile-btn');
+    const shareProfileBtn = document.getElementById('share-profile-btn');
+    const postsGrid = document.getElementById('posts-grid');
+    const noPosts = document.getElementById('no-posts');
+    const createFirstPostBtn = document.getElementById('create-first-post');
+    const modalOverlay = document.getElementById('modal-overlay');
+    const modalContent = document.getElementById('modal-content');
+    const profileTabs = document.querySelectorAll('.profile-tab');
+    
+    // Sample user data (in a real app, this would come from an API)
+    let currentUser = {
+      id: 1,
+      name: "John Doe",
+      username: "johndoe",
+      bio: "Digital creator | Photography enthusiast | Travel lover",
+      profilePicture: "/images/default-profile.png",
+      bannerPicture: "https://www.google.com/url?sa=i&url=https%3A%2F%2Fstore.steampowered.com%2Fapp%2F779110%2FHarsh%2F&psig=AOvVaw0Kjxqm6kNy5P-8ZCW7I9rt&ust=1753423829435000&source=images&cd=vfe&opi=89978449&ved=0CBUQjRxqFwoTCLDPx_bq1I4DFQAAAAAdAAAAABAE",
+      posts: 12,
+      followers: 345,
+      following: 210,
+      isCurrentUser: true
+    };
+    
+    // Sample posts data
+    let userPosts = [
+      {
+        id: 1,
+        image: "/images/post1.jpg",
+        likes: 45,
+        comments: 12,
+        caption: "Enjoying the sunset at the beach! #sunset #beach"
+      },
+      {
+        id: 2,
+        image: "/images/post2.jpg",
+        likes: 89,
+        comments: 23,
+        caption: "Weekend hiking trip with friends #hiking #nature"
+      },
+      {
+        id: 3,
+        image: "/images/post3.jpg",
+        likes: 32,
+        comments: 5,
+        caption: "My new workspace setup #workspace #homeoffice"
+      }
+    ];
+    
+    // Initialize the page
+    document.addEventListener('DOMContentLoaded', function() {
+      loadProfileData();
+      loadPosts();
+      setupEventListeners();
+    });
+    
+    // Load profile data
+    function loadProfileData() {
+      profileName.textContent = currentUser.name;
+      profileUsername.textContent = `@${currentUser.username}`;
+      profileBio.textContent = currentUser.bio;
+      profilePicture.src = currentUser.profilePicture;
+      document.getElementById('profile-banner-img').src = currentUser.bannerPicture;
+      postCount.textContent = currentUser.posts;
+      followerCount.textContent = currentUser.followers;
+      followingCount.textContent = currentUser.following;
+      
+      // If this is not the current user's profile, show follow button instead of edit
+      if (!currentUser.isCurrentUser) {
+        profileActions.innerHTML = `
+          <button class="btn btn-primary" id="follow-btn">Follow</button>
+          <button class="btn btn-outline" id="message-btn">Message</button>
+        `;
+      }
+    }
+    
+    // Load user posts
+    function loadPosts() {
+      if (userPosts.length === 0) {
+        noPosts.style.display = 'block';
+        postsGrid.style.display = 'none';
+      } else {
+        noPosts.style.display = 'none';
+        postsGrid.style.display = 'grid';
+        postsGrid.innerHTML = '';
+        
+        userPosts.forEach(post => {
+          const postElement = document.createElement('div');
+          postElement.className = 'post-card';
+          postElement.innerHTML = `
+            <img src="${post.image}" alt="Post" class="post-image">
+            <div class="post-actions">
+              <span>❤️ ${post.likes}</span>
+              <span>💬 ${post.comments}</span>
+            </div>
+          `;
+          postsGrid.appendChild(postElement);
+        });
+      }
+    }
+    
+    // Setup event listeners
+    function setupEventListeners() {
+      // Edit profile button
+      if (editProfileBtn) {
+        editProfileBtn.addEventListener('click', showEditProfileModal);
+      }
+      
+      // Share profile button
+      if (shareProfileBtn) {
+        shareProfileBtn.addEventListener('click', shareProfile);
+      }
+      
+      // Create first post button
+      if (createFirstPostBtn) {
+        createFirstPostBtn.addEventListener('click', showCreatePostModal);
+      }
+      
+      // Profile tabs
+      profileTabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+          profileTabs.forEach(t => t.classList.remove('active'));
+          tab.classList.add('active');
+          // In a real app, you would load different content based on the tab
+          console.log(`Switched to ${tab.dataset.tab} tab`);
+        });
+      });
+      
+      // Modal overlay click to close
+      modalOverlay.addEventListener('click', (e) => {
+        if (e.target === modalOverlay) {
+          closeModal();
+        }
+      });
+    }
+    
+    // Show edit profile modal
+    function showEditProfileModal() {
+      modalContent.innerHTML = `
+        <div class="edit-profile-form">
+          <h2>Edit Profile</h2>
+          <div class="form-group">
+            <label for="edit-name">Name</label>
+            <input type="text" id="edit-name" class="form-control" value="${currentUser.name}">
+          </div>
+          <div class="form-group">
+            <label for="edit-username">Username</label>
+            <input type="text" id="edit-username" class="form-control" value="${currentUser.username}">
+          </div>
+          <div class="form-group">
+            <label for="edit-bio">Bio</label>
+            <textarea id="edit-bio" class="form-control" rows="3">${currentUser.bio}</textarea>
+          </div>
+          <div class="form-group">
+            <label for="edit-profile-pic">Profile Picture</label>
+            <input type="file" id="edit-profile-pic" class="form-control">
+          </div>
+          <div class="form-group">
+            <label for="edit-banner-pic">Banner Picture</label>
+            <input type="file" id="edit-banner-pic" class="form-control">
+          </div>
+          <div class="form-actions">
+            <button class="btn btn-primary" id="save-profile-btn">Save Changes</button>
+            <button class="btn btn-outline" id="cancel-edit-btn">Cancel</button>
+          </div>
+        </div>
+      `;
+      
+      openModal();
+      
+      // Add event listeners to modal buttons
+      document.getElementById('save-profile-btn').addEventListener('click', saveProfileChanges);
+      document.getElementById('cancel-edit-btn').addEventListener('click', closeModal);
+    }
+    
+    // Save profile changes
+    function saveProfileChanges() {
+      const newName = document.getElementById('edit-name').value;
+      const newUsername = document.getElementById('edit-username').value;
+      const newBio = document.getElementById('edit-bio').value;
+      
+      // In a real app, you would upload files to a server
+      const profilePicFile = document.getElementById('edit-profile-pic').files[0];
+      const bannerPicFile = document.getElementById('edit-banner-pic').files[0];
+      
+      // Update user data
+      currentUser.name = newName;
+      currentUser.username = newUsername;
+      currentUser.bio = newBio;
+      
+      // Update profile picture if changed
+      if (profilePicFile) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          currentUser.profilePicture = e.target.result;
+          profilePicture.src = e.target.result;
+        };
+        reader.readAsDataURL(profilePicFile);
+      }
+      
+      // Update banner picture if changed
+      if (bannerPicFile) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          currentUser.bannerPicture = e.target.result;
+          document.getElementById('https://www.google.com/url?sa=i&url=https%3A%2F%2Fstore.steampowered.com%2Fapp%2F779110%2FHarsh%2F&psig=AOvVaw0Kjxqm6kNy5P-8ZCW7I9rt&ust=1753423829435000&source=images&cd=vfe&opi=89978449&ved=0CBUQjRxqFwoTCLDPx_bq1I4DFQAAAAAdAAAAABAE').src = e.target.result;
+        };
+        reader.readAsDataURL(bannerPicFile);
+      }
+      
+      // Update the UI
+      loadProfileData();
+      closeModal();
+      
+      // In a real app, you would send this data to your backend
+      console.log('Profile updated:', currentUser);
+    }
+    
+    // Share profile
+    function shareProfile() {
+      // In a real app, this would use the Web Share API or social media sharing
+      const profileUrl = `${window.location.origin}/profile/${currentUser.username}`;
+      alert(`Share this link: ${profileUrl}`);
+      console.log('Profile shared:', profileUrl);
+    }
+    
+    // Show create post modal
+    function showCreatePostModal() {
+      modalContent.innerHTML = `
+        <div class="create-post-form">
+          <h2>Create New Post</h2>
+          <div class="form-group">
+            <label for="post-image">Upload Image</label>
+            <input type="file" id="post-image" class="form-control" accept="image/*">
+            <div id="image-preview" style="margin-top: 1rem;"></div>
+          </div>
+          <div class="form-group">
+            <label for="post-caption">Caption</label>
+            <textarea id="post-caption" class="form-control" rows="3" placeholder="Write a caption..."></textarea>
+          </div>
+          <div class="form-actions">
+            <button class="btn btn-primary" id="publish-post-btn">Publish</button>
+            <button class="btn btn-outline" id="cancel-post-btn">Cancel</button>
+          </div>
+        </div>
+      `;
+      
+      openModal();
+      
+      // Preview image when selected
+      document.getElementById('post-image').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            document.getElementById('image-preview').innerHTML = `
+              <img src="${e.target.result}" style="max-width: 100%; max-height: 300px; border-radius: 4px;">
+            `;
+          };
+          reader.readAsDataURL(file);
+        }
+      });
+      
+      // Add event listeners to modal buttons
+      document.getElementById('publish-post-btn').addEventListener('click', publishPost);
+      document.getElementById('cancel-post-btn').addEventListener('click', closeModal);
+    }
+    
+    // Publish new post
+    function publishPost() {
+      const caption = document.getElementById('post-caption').value;
+      const imageFile = document.getElementById('post-image').files[0];
+      
+      if (!imageFile) {
+        alert('Please select an image to post');
+        return;
+      }
+      
+      // In a real app, you would upload the image to a server
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const newPost = {
+          id: userPosts.length + 1,
+          image: e.target.result,
+          likes: 0,
+          comments: 0,
+          caption: caption
+        };
+        
+        userPosts.unshift(newPost); // Add to beginning of array
+        currentUser.posts += 1;
+        postCount.textContent = currentUser.posts;
+        
+        loadPosts();
+        closeModal();
+        
+        console.log('New post published:', newPost);
+      };
+      reader.readAsDataURL(imageFile);
+    }
+    
+    // Open modal
+    function openModal() {
+      modalOverlay.style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+    }
+    
+    // Close modal
+    function closeModal() {
+      modalOverlay.style.display = 'none';
+      document.body.style.overflow = 'auto';
+    }
+  </script>
+</body>
+</html>

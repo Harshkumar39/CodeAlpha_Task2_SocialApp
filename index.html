@@ -1,0 +1,1119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SocialApp - Harsh - Your Instagram Clone</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    :root {
+      --primary-color: #405DE6;
+      --secondary-color: #5851DB;
+      --accent-color: #833AB4;
+      --danger-color: #E1306C;
+      --light-color: #f8f9fa;
+      --dark-color: #343a40;
+      --border-color: #dbdbdb;
+      --text-dark: #262626;
+      --text-light: #8e8e8e;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background-color: #fafafa;
+      color: var(--text-dark);
+      line-height: 1.6;
+    }
+    
+    .container {
+      max-width: 975px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+    
+    /* Header Styles */
+    .header {
+      background-color: white;
+      border-bottom: 1px solid var(--border-color);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      height: 54px;
+      padding: 0 20px;
+    }
+    
+    .logo {
+      font-size: 24px;
+      font-weight: 600;
+      text-decoration: none;
+      color: var(--text-dark);
+      font-family: 'Billabong', cursive;
+    }
+    
+    @font-face {
+      font-family: 'Billabong';
+      src: url('https://cdn.rawgit.com/milktronics/beaglegr.am/master/public/fonts/billabong-webfont.eot');
+      src: url('https://cdn.rawgit.com/milktronics/beaglegr.am/master/public/fonts/billabong-webfont.eot?#iefix') format('embedded-opentype'),
+           url('https://cdn.rawgit.com/milktronics/beaglegr.am/master/public/fonts/billabong-webfont.woff') format('woff'),
+           url('https://cdn.rawgit.com/milktronics/beaglegr.am/master/public/fonts/billabong-webfont.ttf') format('truetype'),
+           url('https://cdn.rawgit.com/milktronics/beaglegr.am/master/public/fonts/billabong-webfont.svg#billabongregular') format('svg');
+      font-weight: normal;
+      font-style: normal;
+    }
+    
+    .search-bar {
+      position: relative;
+      width: 215px;
+    }
+    
+    .search-bar input {
+      background-color: #efefef;
+      border: none;
+      border-radius: 8px;
+      padding: 8px 10px 8px 30px;
+      width: 100%;
+      font-size: 14px;
+    }
+    
+    .search-bar::before {
+      content: "\f002";
+      font-family: "Font Awesome 6 Free";
+      font-weight: 900;
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-light);
+      font-size: 14px;
+    }
+    
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 22px;
+    }
+    
+    .nav-link {
+      text-decoration: none;
+      color: var(--text-dark);
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+    }
+    
+    .nav-link.active {
+      font-weight: 600;
+    }
+    
+    .nav-link i {
+      font-size: 22px;
+    }
+    
+    .profile-pic {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+    
+    /* Main Content Styles */
+    .page-content {
+      padding: 30px 0;
+    }
+    
+    /* Create Post Styles */
+    .create-post {
+      background-color: white;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 24px;
+    }
+    
+    #post-content {
+      width: 100%;
+      border: none;
+      resize: none;
+      font-size: 14px;
+      margin-bottom: 10px;
+      min-height: 80px;
+      outline: none;
+    }
+    
+    .post-form-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid var(--border-color);
+      padding-top: 10px;
+    }
+    
+    .post-form-options {
+      display: flex;
+      gap: 15px;
+    }
+    
+    .post-option {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+    
+    .post-submit-btn {
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      border-radius: 4px;
+      padding: 6px 16px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    
+    .post-submit-btn:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+    
+    .image-preview {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    
+    .preview-item {
+      position: relative;
+      width: 100px;
+      height: 100px;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    
+    .preview-item img, .preview-item video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    
+    .remove-preview {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      background-color: rgba(0, 0, 0, 0.5);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+    
+    /* Feed Styles */
+    #feed-container {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+    
+    .post-card {
+      background-color: white;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+    }
+    
+    .post-header {
+      display: flex;
+      align-items: center;
+      padding: 14px 16px;
+    }
+    
+    .post-user-pic {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-right: 12px;
+    }
+    
+    .post-username {
+      font-weight: 600;
+      font-size: 14px;
+      text-decoration: none;
+      color: var(--text-dark);
+    }
+    
+    .post-more {
+      margin-left: auto;
+      cursor: pointer;
+    }
+    
+    .post-media {
+      position: relative;
+      width: 100%;
+      background-color: black;
+    }
+    
+    .post-image, .post-video {
+      width: 100%;
+      display: block;
+    }
+    
+    .post-video {
+      height: auto;
+    }
+    
+    .video-controls {
+      position: absolute;
+      bottom: 10px;
+      left: 0;
+      right: 0;
+      display: flex;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    
+    .post-media:hover .video-controls {
+      opacity: 1;
+    }
+    
+    .video-control-btn {
+      background-color: rgba(0, 0, 0, 0.5);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      margin: 0 5px;
+    }
+    
+    .post-actions {
+      padding: 6px 16px;
+      display: flex;
+      gap: 16px;
+    }
+    
+    .post-action {
+      font-size: 24px;
+      cursor: pointer;
+      color: var(--text-dark);
+    }
+    
+    .post-action.liked {
+      color: var(--danger-color);
+    }
+    
+    .post-action.save {
+      margin-left: auto;
+    }
+    
+    .post-likes {
+      font-weight: 600;
+      font-size: 14px;
+      padding: 0 16px;
+      margin-bottom: 8px;
+    }
+    
+    .post-caption {
+      padding: 0 16px;
+      margin-bottom: 8px;
+    }
+    
+    .post-caption-username {
+      font-weight: 600;
+      margin-right: 5px;
+      text-decoration: none;
+      color: var(--text-dark);
+    }
+    
+    .post-comments {
+      padding: 0 16px 8px;
+      color: var(--text-light);
+      font-size: 14px;
+    }
+    
+    .post-time {
+      padding: 0 16px 12px;
+      color: var(--text-light);
+      font-size: 10px;
+      text-transform: uppercase;
+      border-bottom: 1px solid var(--border-color);
+    }
+    
+    .post-add-comment {
+      display: flex;
+      padding: 16px;
+    }
+    
+    .comment-input {
+      flex: 1;
+      border: none;
+      outline: none;
+      font-size: 14px;
+    }
+    
+    .comment-post {
+      color: var(--primary-color);
+      font-weight: 600;
+      background: none;
+      border: none;
+      cursor: pointer;
+    }
+    
+    .comment-post:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    
+    /* Stories Styles */
+    .stories-container {
+      background-color: white;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 24px;
+      overflow-x: auto;
+      white-space: nowrap;
+    }
+    
+    .stories {
+      display: flex;
+      gap: 15px;
+    }
+    
+    .story {
+      display: inline-block;
+      text-align: center;
+      cursor: pointer;
+    }
+    
+    .story-avatar {
+      width: 66px;
+      height: 66px;
+      border-radius: 50%;
+      padding: 2px;
+      background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+    }
+    
+    .story-avatar-inner {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      border: 2px solid white;
+      overflow: hidden;
+    }
+    
+    .story-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    
+    .story-username {
+      font-size: 12px;
+      margin-top: 4px;
+      max-width: 66px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    
+    /* Auth Pages */
+    .auth-container {
+      max-width: 350px;
+      margin: 0 auto;
+    }
+    
+    .auth-card {
+      background-color: white;
+      border: 1px solid var(--border-color);
+      border-radius: 1px;
+      padding: 20px 40px;
+      text-align: center;
+      margin-bottom: 10px;
+    }
+    
+    .auth-title {
+      margin: 22px auto 12px;
+      font-size: 24px;
+    }
+    
+    .auth-form {
+      margin-top: 24px;
+    }
+    
+    .form-group {
+      margin-bottom: 16px;
+    }
+    
+    .form-group label {
+      display: block;
+      text-align: left;
+      font-size: 12px;
+      color: var(--text-dark);
+      margin-bottom: 4px;
+    }
+    
+    .form-group input {
+      width: 100%;
+      padding: 9px 8px 7px;
+      border: 1px solid var(--border-color);
+      border-radius: 3px;
+      background-color: #fafafa;
+      font-size: 14px;
+    }
+    
+    .auth-btn {
+      width: 100%;
+      padding: 8px;
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      border-radius: 4px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 8px;
+    }
+    
+    .auth-footer {
+      margin: 15px 0;
+      font-size: 14px;
+    }
+    
+    .auth-link {
+      color: var(--primary-color);
+      font-weight: 600;
+      text-decoration: none;
+    }
+    
+    /* Modal Styles */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.8);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+    
+    .modal {
+      background-color: white;
+      border-radius: 12px;
+      max-width: 90%;
+      max-height: 90%;
+      overflow: auto;
+    }
+    
+    .modal-close {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      background: none;
+      border: none;
+      color: white;
+      font-size: 24px;
+      cursor: pointer;
+    }
+    
+    /* Responsive Styles */
+    @media (max-width: 768px) {
+      .search-bar {
+        display: none;
+      }
+      
+      .navbar {
+        padding: 0 10px;
+      }
+      
+      .container {
+        padding: 0 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="container">
+      <nav class="navbar">
+        <a href="/" class="logo">SocialApp - Harsh</a>
+        <div class="search-bar">
+          <input type="text" placeholder="Search...">
+        </div>
+        <div class="nav-links">
+          <a href="/" class="nav-link active"><i class="fas fa-home"></i></a>
+          <a href="#" class="nav-link"><i class="far fa-paper-plane"></i></a>
+          <a href="#" class="nav-link"><i class="far fa-compass"></i></a>
+          <a href="#" class="nav-link"><i class="far fa-heart"></i></a>
+          <a href="/profile.html" class="nav-link auth-only" id="profile-link" style="display: none;">
+            <img src="/images/default-profile.png" alt="Profile" class="profile-pic">
+          </a>
+          <button id="logout-btn" class="nav-link auth-only" style="display: none;"><i class="fas fa-sign-out-alt"></i></button>
+          <a href="http://127.0.0.1:3000/views/login.html" class="nav-link unauth-only">Login</a>
+          <a href="http://127.0.0.1:3000/views/register.html" class="nav-link unauth-only">Register</a>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="page-content" id="feed-page" style="display: none;">
+      <div class="stories-container">
+        <div class="stories" id="stories-container">
+          <!-- Stories will be loaded here -->
+        </div>
+      </div>
+      
+      <div class="create-post">
+        <form id="post-form">
+          <textarea id="post-content" placeholder="What's on your mind?" required></textarea>
+          <div class="post-form-actions">
+            <div class="post-form-options">
+              <label for="post-image-input" class="post-option">
+                <i class="fas fa-image"></i>
+                <span>Photo</span>
+              </label>
+              <label for="post-video-input" class="post-option">
+                <i class="fas fa-video"></i>
+                <span>Video</span>
+              </label>
+              <input type="file" id="post-image-input" accept="image/*" multiple style="display: none;">
+              <input type="file" id="post-video-input" accept="video/*" style="display: none;">
+            </div>
+            <button type="submit" class="post-submit-btn">Post</button>
+          </div>
+          <div class="image-preview" id="post-media-preview"></div>
+        </form>
+      </div>
+      <div id="feed-container">
+        <!-- Posts will be loaded here -->
+      </div>
+    </div>
+
+    <div class="page-content" id="login-page" style="display: none;">
+      <div class="auth-container">
+        <div class="auth-card">
+          <h2 class="auth-title">Login</h2>
+          <form id="login-form" class="auth-form">
+            <div class="form-group">
+              <label for="login-username">Username or Email</label>
+              <input type="text" id="login-username" name="username" required>
+            </div>
+            <div class="form-group">
+              <label for="login-password">Password</label>
+              <input type="password" id="login-password" name="password" required>
+            </div>
+            <button type="submit" class="auth-btn">Login</button>
+          </form>
+          <div class="auth-footer">
+            <p>Don't have an account? <a href="/register.html" class="auth-link">Register</a></p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="page-content" id="register-page" style="display: none;">
+      <div class="auth-container">
+        <div class="auth-card">
+          <h2 class="auth-title">Register</h2>
+          <form id="register-form" class="auth-form">
+            <div class="form-group">
+              <label for="register-username">Username</label>
+              <input type="text" id="register-username" name="username" required>
+            </div>
+            <div class="form-group">
+              <label for="register-email">Email</label>
+              <input type="email" id="register-email" name="email" required>
+            </div>
+            <div class="form-group">
+              <label for="register-password">Password</label>
+              <input type="password" id="register-password" name="password" required>
+            </div>
+            <div class="form-group">
+              <label for="register-firstName">First Name</label>
+              <input type="text" id="register-firstName" name="firstName">
+            </div>
+            <div class="form-group">
+              <label for="register-lastName">Last Name</label>
+              <input type="text" id="register-lastName" name="lastName">
+            </div>
+            <button type="submit" class="auth-btn">Register</button>
+          </form>
+          <div class="auth-footer">
+            <p>Already have an account? <a href="http://127.0.0.1:3000/views/login.html" class="auth-link">Login</a></p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="page-content" id="profile-page" style="display: none;">
+      <div class="profile-header" id="profile-header"></div>
+      <div id="profile-posts-container"></div>
+    </div>
+
+    <div class="page-content" id="post-page" style="display: none;">
+      <div id="post-detail-container"></div>
+    </div>
+  </main>
+
+  <div class="modal-overlay" id="modal-overlay" style="display: none;">
+    <button class="modal-close" id="modal-close">&times;</button>
+    <div class="modal" id="modal-content"></div>
+  </div>
+
+  <script>
+    // Mock data for demonstration
+    const mockUsers = [
+      { id: 1, username: 'johndoe', fullName: 'John Doe', avatar: 'https://randomuser.me/api/portraits/men/1.jpg' },
+      { id: 2, username: 'janedoe', fullName: 'Jane Doe', avatar: 'https://randomuser.me/api/portraits/women/1.jpg' },
+      { id: 3, username: 'bobsmith', fullName: 'Bob Smith', avatar: 'https://randomuser.me/api/portraits/men/2.jpg' },
+      { id: 4, username: 'alicejohnson', fullName: 'Alice Johnson', avatar: 'https://randomuser.me/api/portraits/women/2.jpg' },
+      { id: 5, username: 'mikebrown', fullName: 'Mike Brown', avatar: 'https://randomuser.me/api/portraits/men/3.jpg' }
+    ];
+
+    const mockPosts = [
+      {
+        id: 1,
+        userId: 1,
+        username: 'johndoe',
+        userPic: 'https://randomuser.me/api/portraits/men/1.jpg',
+        content: 'Enjoying a beautiful day at the beach! 🏖️ #summer #vacation',
+        media: [
+          { type: 'image', url: 'https://source.unsplash.com/random/600x600/?beach' }
+        ],
+        likes: 24,
+        comments: 5,
+        timestamp: '2023-06-15T10:30:00Z',
+        isLiked: false
+      },
+      {
+        id: 2,
+        userId: 2,
+        username: 'janedoe',
+        userPic: 'https://randomuser.me/api/portraits/women/1.jpg',
+        content: 'Check out my new video! Excited to share my journey with you all.',
+        media: [
+          { type: 'video', url: 'https://samplelib.com/lib/preview/mp4/sample-5s.mp4', thumbnail: 'https://source.unsplash.com/random/600x600/?travel' }
+        ],
+        likes: 42,
+        comments: 8,
+        timestamp: '2023-06-14T15:45:00Z',
+        isLiked: true
+      },
+      {
+        id: 3,
+        userId: 3,
+        username: 'bobsmith',
+        userPic: 'https://randomuser.me/api/portraits/men/2.jpg',
+        content: 'Multiple image post test',
+        media: [
+          { type: 'image', url: 'https://source.unsplash.com/random/600x600/?nature' },
+          { type: 'image', url: 'https://source.unsplash.com/random/600x600/?mountain' },
+          { type: 'image', url: 'https://source.unsplash.com/random/600x600/?forest' }
+        ],
+        likes: 15,
+        comments: 3,
+        timestamp: '2023-06-13T09:20:00Z',
+        isLiked: false
+      }
+    ];
+
+    // DOM Elements
+    const feedPage = document.getElementById('feed-page');
+    const loginPage = document.getElementById('login-page');
+    const registerPage = document.getElementById('register-page');
+    const profilePage = document.getElementById('profile-page');
+    const postPage = document.getElementById('post-page');
+    
+    const authOnlyElements = document.querySelectorAll('.auth-only');
+    const unauthOnlyElements = document.querySelectorAll('.unauth-only');
+    
+    const postForm = document.getElementById('post-form');
+    const postContent = document.getElementById('post-content');
+    const postImageInput = document.getElementById('post-image-input');
+    const postVideoInput = document.getElementById('post-video-input');
+    const postMediaPreview = document.getElementById('post-media-preview');
+    const feedContainer = document.getElementById('feed-container');
+    const storiesContainer = document.getElementById('stories-container');
+    
+    const modalOverlay = document.getElementById('modal-overlay');
+    const modalContent = document.getElementById('modal-content');
+    const modalClose = document.getElementById('modal-close');
+    
+    // State
+    let currentUser = null;
+    let mediaFiles = [];
+    
+    // Initialize the app
+    function init() {
+      // Check if user is logged in (in a real app, this would check localStorage or cookies)
+      const isLoggedIn = false; // Change to true to simulate logged in state
+      
+      if (isLoggedIn) {
+        currentUser = {
+          id: 1,
+          username: 'johndoe',
+          fullName: 'John Doe',
+          avatar: 'https://randomuser.me/api/portraits/men/1.jpg'
+        };
+        showAuthState(true);
+      } else {
+        showAuthState(false);
+      }
+      
+      // Show the appropriate page based on URL
+      const path = window.location.pathname;
+      switch(path) {
+        case '/login.html':
+          showPage('login');
+          break;
+        case '/register.html':
+          showPage('register');
+          break;
+        case '/profile.html':
+          showPage('profile');
+          break;
+        default:
+          showPage('feed');
+      }
+      
+      // Load content for the current page
+      loadPageContent();
+      
+      // Set up event listeners
+      setupEventListeners();
+    }
+    
+    // Show/hide elements based on auth state
+    function showAuthState(isAuthenticated) {
+      authOnlyElements.forEach(el => {
+        el.style.display = isAuthenticated ? '' : 'none';
+      });
+      
+      unauthOnlyElements.forEach(el => {
+        el.style.display = isAuthenticated ? 'none' : '';
+      });
+    }
+    
+    // Show the specified page
+    function showPage(page) {
+      feedPage.style.display = 'none';
+      loginPage.style.display = 'none';
+      registerPage.style.display = 'none';
+      profilePage.style.display = 'none';
+      postPage.style.display = 'none';
+      
+      switch(page) {
+        case 'feed':
+          feedPage.style.display = '';
+          break;
+        case 'login':
+          loginPage.style.display = '';
+          break;
+        case 'register':
+          registerPage.style.display = '';
+          break;
+        case 'profile':
+          profilePage.style.display = '';
+          break;
+        case 'post':
+          postPage.style.display = '';
+          break;
+      }
+    }
+    
+    // Load content for the current page
+    function loadPageContent() {
+      if (feedPage.style.display !== 'none') {
+        loadStories();
+        loadFeed();
+      }
+    }
+    
+    // Load stories
+    function loadStories() {
+      storiesContainer.innerHTML = '';
+      
+      mockUsers.forEach(user => {
+        const storyElement = document.createElement('div');
+        storyElement.className = 'story';
+        storyElement.innerHTML = `
+          <div class="story-avatar">
+            <div class="story-avatar-inner">
+              <img src="${user.avatar}" alt="${user.username}">
+            </div>
+          </div>
+          <div class="story-username">${user.username}</div>
+        `;
+        storiesContainer.appendChild(storyElement);
+      });
+    }
+    
+    // Load feed posts
+    function loadFeed() {
+      feedContainer.innerHTML = '';
+      
+      mockPosts.forEach(post => {
+        const postElement = createPostElement(post);
+        feedContainer.appendChild(postElement);
+      });
+    }
+    
+    // Create a post element
+    function createPostElement(post) {
+      const postElement = document.createElement('div');
+      postElement.className = 'post-card';
+      
+      // Media content
+      let mediaContent = '';
+      if (post.media.length === 1) {
+        const item = post.media[0];
+        if (item.type === 'image') {
+          mediaContent = `<img src="${item.url}" class="post-image" alt="Post image">`;
+        } else if (item.type === 'video') {
+          mediaContent = `
+            <video class="post-video" poster="${item.thumbnail}" controls>
+              <source src="${item.url}" type="video/mp4">
+              Your browser does not support the video tag.
+            </video>
+            <div class="video-controls">
+              <button class="video-control-btn"><i class="fas fa-play"></i></button>
+            </div>
+          `;
+        }
+      } else if (post.media.length > 1) {
+        // For multiple images, we'll just show the first one in this example
+        mediaContent = `<img src="${post.media[0].url}" class="post-image" alt="Post image">`;
+      }
+      
+      // Format timestamp
+      const postDate = new Date(post.timestamp);
+      const timeAgo = formatTimeAgo(postDate);
+      
+      postElement.innerHTML = `
+        <div class="post-header">
+          <img src="${post.userPic}" class="post-user-pic" alt="${post.username}">
+          <a href="/profile.html" class="post-username">${post.username}</a>
+          <div class="post-more">
+            <i class="fas fa-ellipsis-h"></i>
+          </div>
+        </div>
+        <div class="post-media">
+          ${mediaContent}
+        </div>
+        <div class="post-actions">
+          <button class="post-action ${post.isLiked ? 'liked' : ''}" data-post-id="${post.id}">
+            <i class="${post.isLiked ? 'fas' : 'far'} fa-heart"></i>
+          </button>
+          <button class="post-action" data-post-id="${post.id}">
+            <i class="far fa-comment"></i>
+          </button>
+          <button class="post-action" data-post-id="${post.id}">
+            <i class="far fa-paper-plane"></i>
+          </button>
+          <button class="post-action save" data-post-id="${post.id}">
+            <i class="far fa-bookmark"></i>
+          </button>
+        </div>
+        <div class="post-likes">${post.likes} likes</div>
+        <div class="post-caption">
+          <a href="/profile.html" class="post-caption-username">${post.username}</a>
+          ${post.content}
+        </div>
+        <div class="post-comments">View all ${post.comments} comments</div>
+        <div class="post-time">${timeAgo}</div>
+        <div class="post-add-comment">
+          <input type="text" class="comment-input" placeholder="Add a comment...">
+          <button class="comment-post" disabled>Post</button>
+        </div>
+      `;
+      
+      return postElement;
+    }
+    
+    // Format time ago
+    function formatTimeAgo(date) {
+      const now = new Date();
+      const diffInSeconds = Math.floor((now - date) / 1000);
+      
+      if (diffInSeconds < 60) {
+        return `${diffInSeconds} seconds ago`;
+      }
+      
+      const diffInMinutes = Math.floor(diffInSeconds / 60);
+      if (diffInMinutes < 60) {
+        return `${diffInMinutes} minute${diffInMinutes === 1 ? '' : 's'} ago`;
+      }
+      
+      const diffInHours = Math.floor(diffInMinutes / 60);
+      if (diffInHours < 24) {
+        return `${diffInHours} hour${diffInHours === 1 ? '' : 's'} ago`;
+      }
+      
+      const diffInDays = Math.floor(diffInHours / 24);
+      return `${diffInDays} day${diffInDays === 1 ? '' : 's'} ago`;
+    }
+    
+    // Set up event listeners
+    function setupEventListeners() {
+      // Post form submission
+      postForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const content = postContent.value.trim();
+        
+        if (content || mediaFiles.length > 0) {
+          // In a real app, this would send the post to the server
+          const newPost = {
+            id: mockPosts.length + 1,
+            userId: currentUser.id,
+            username: currentUser.username,
+            userPic: currentUser.avatar,
+            content: content,
+            media: mediaFiles.map(file => ({
+              type: file.type.split('/')[0],
+              url: URL.createObjectURL(file)
+            })),
+            likes: 0,
+            comments: 0,
+            timestamp: new Date().toISOString(),
+            isLiked: false
+          };
+          
+          mockPosts.unshift(newPost);
+          loadFeed();
+          
+          // Reset form
+          postContent.value = '';
+          mediaFiles = [];
+          postMediaPreview.innerHTML = '';
+        }
+      });
+      
+      // Image input change
+      postImageInput.addEventListener('change', function(e) {
+        handleMediaSelection(e.target.files, 'image');
+      });
+      
+      // Video input change
+      postVideoInput.addEventListener('change', function(e) {
+        handleMediaSelection(e.target.files, 'video');
+      });
+      
+      // Comment input
+      document.addEventListener('input', function(e) {
+        if (e.target.classList.contains('comment-input')) {
+          const commentBtn = e.target.nextElementSibling;
+          commentBtn.disabled = e.target.value.trim() === '';
+        }
+      });
+      
+      // Like button
+      document.addEventListener('click', function(e) {
+        if (e.target.closest('.post-action') && e.target.closest('.post-action').querySelector('.fa-heart')) {
+          const likeBtn = e.target.closest('.post-action');
+          const postId = parseInt(likeBtn.dataset.postId);
+          const post = mockPosts.find(p => p.id === postId);
+          
+          if (post) {
+            post.isLiked = !post.isLiked;
+            post.likes += post.isLiked ? 1 : -1;
+            
+            const heartIcon = likeBtn.querySelector('.fa-heart');
+            heartIcon.classList.toggle('far');
+            heartIcon.classList.toggle('fas');
+            likeBtn.classList.toggle('liked');
+            
+            const likesElement = likeBtn.closest('.post-card').querySelector('.post-likes');
+            likesElement.textContent = `${post.likes} like${post.likes !== 1 ? 's' : ''}`;
+          }
+        }
+      });
+      
+      // Modal close
+      modalClose.addEventListener('click', function() {
+        modalOverlay.style.display = 'none';
+      });
+      
+      modalOverlay.addEventListener('click', function(e) {
+        if (e.target === modalOverlay) {
+          modalOverlay.style.display = 'none';
+        }
+      });
+    }
+    
+    // Handle media selection
+    function handleMediaSelection(files, type) {
+      if (!files || files.length === 0) return;
+      
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        
+        // Check if file is of the correct type
+        if (!file.type.startsWith(type)) continue;
+        
+        // Add to media files
+        mediaFiles.push(file);
+        
+        // Create preview
+        const previewItem = document.createElement('div');
+        previewItem.className = 'preview-item';
+        
+        const removeBtn = document.createElement('button');
+        removeBtn.className = 'remove-preview';
+        removeBtn.innerHTML = '&times;';
+        removeBtn.addEventListener('click', function() {
+          previewItem.remove();
+          mediaFiles = mediaFiles.filter(f => f !== file);
+        });
+        
+        if (type === 'image') {
+          const img = document.createElement('img');
+          img.src = URL.createObjectURL(file);
+          previewItem.appendChild(img);
+        } else if (type === 'video') {
+          const video = document.createElement('video');
+          video.src = URL.createObjectURL(file);
+          video.controls = true;
+          previewItem.appendChild(video);
+        }
+        
+        previewItem.appendChild(removeBtn);
+        postMediaPreview.appendChild(previewItem);
+      }
+      
+      // Reset input value to allow selecting the same file again
+      if (type === 'image') {
+        postImageInput.value = '';
+      } else {
+        postVideoInput.value = '';
+      }
+    }
+    
+    // Initialize the app when DOM is loaded
+    document.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>
